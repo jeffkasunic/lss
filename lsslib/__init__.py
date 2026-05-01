@@ -1,6 +1,10 @@
 # __init__.py
 __version__ = "0.1.0"
-__author__ = "Jeff Kasunic"
 
-from .seq import seq_create, seq_rename, seq_delete
+import logging
 
+from .sequence import seq_create, seq_rename
+
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())

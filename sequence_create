@@ -1,33 +1,42 @@
 #!/usr/bin/env python3
 # Generates various sequences of files. To be used as a test data set for the lss tool.
 
+import logging
 import sys
+from pathlib import Path
 
 from lsslib import seq_create
 
-# Get file path
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+
+
+# Get file path from command line
 try:
     path = sys.argv[1]
 except IndexError:
     path = "./"
-print("Creating files in:\n" + path)
+logger.info("Creating files at: " + path)
 
-# Check if directory exists and is empty. Don't overwrite.
-# Check if directory exists. If not, create.
+# Check if file path directory exists.
+if Path(path).is_dir():
+    # Create a contigous sequenece of files with 4-padded frames.
+    seq_create("seq100", range_start=0, range_end=4, path=(path + "/"))
+    
+    # Create a discontigous sequence of files with 4-padded frames.
+    seq_create("seq1600", range_start=1, range_end=3, path=(path + "/"))
+    #seq.seq_create("seq1600", range_start=5, range_end=7, path=path)
+    
+    # Create a sequence of files with step of 5.
+    seq_create("seq2000", range_start=0, range_end=15, step=5, path=(path + "/"))
+    
+    # Create a sequence of files with frames of different padding.
+    seq_create("seq3600", range_start=1, range_end=3, padding=3, path=(path + "/"))
+    seq_create("seq3600", range_start=1, range_end=3, padding=4, path=(path + "/"))
+    
+    # Create a sequence a non-padded sequence.
+    seq_create("seq3800", range_start=0, range_end=3, padding=0, path=(path + "/"))
 
-# Create a contigous sequenece of files with 4-padded frames.
-seq_create("seq100", range_start=0, range_end=4, path=path)
-
-# Create a discontigous sequence of files with 4-padded frames.
-seq_create("seq1600", range_start=1, range_end=3, path=path)
-#seq.seq_create("seq1600", range_start=5, range_end=7, path=path)
-
-# Create a sequence of files with step of 5.
-seq_create("seq2000", range_start=0, range_end=15, step=5, path=path)
-
-# Create a sequence of files with frames of different padding.
-seq_create("seq3600", range_start=1, range_end=3, padding=3, path=path)
-seq_create("seq3600", range_start=1, range_end=3, padding=4, path=path)
-
-# Create a sequence a non-padded sequence.
-seq_create("seq3800", range_start=0, range_end=3, padding=0, path=path)
+else:
+    logger.error("Path does not exist. No files created.")
+    sys.exit(1)
