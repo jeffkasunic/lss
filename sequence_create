@@ -25,7 +25,7 @@ if Path(path).is_dir():
     
     # Create a discontigous sequence of files with 4-padded frames.
     seq_create("seq1600", range_start=1, range_end=3, path=(path + "/"))
-    #seq.seq_create("seq1600", range_start=5, range_end=7, path=path)
+    seq_create("seq1600", range_start=5, range_end=7, path=(path + "/"))
     
     # Create a sequence of files with step of 5.
     seq_create("seq2000", range_start=0, range_end=15, step=5, path=(path + "/"))
