@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
 import sys
+from pathlib import Path
 
 from lsslib import core
 
 # Get filepath
-if len(sys.argv) >= 2:
-    path = sys.argv[1] + "/"
-else:
+try:
+    path = sys.argv[1]
+except IndexError:
     path = "./"
-print("Listing files in:\n" + path) 
+
+# TODO: Check if directory exists and is empty. Don't overwrite.
+# TODO: Check if directory exists. If not, create.

@@ -5,8 +5,7 @@ The tool will display files in the current working directory if called
 without an explicit path. Otherwise, it will take a path as input.
 
 # sequence_create
-Creates a sequence of files in the current working directory to be used
-as test input to the lss tool.
+Creates a sequence of files to be used as test input with the lss tool.
 
 The tool will create files in the current working directory if called
 without an explicit path. Otherwise, it will take a path as input.
