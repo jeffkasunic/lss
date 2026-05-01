@@ -12,8 +12,8 @@ except IndexError:
     path = "./"
 print("Creating files in:\n" + path)
 
-# TODO: Check if directory exists and is empty. Don't overwrite.
-# TODO: Check if directory exists. If not, create.
+# Check if directory exists and is empty. Don't overwrite.
+# Check if directory exists. If not, create.
 
 # Create a contigous sequenece of files with 4-padded frames.
 seq_create("seq100", range_start=0, range_end=4, path=path)

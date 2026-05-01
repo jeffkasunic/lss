@@ -11,5 +11,5 @@ try:
 except IndexError:
     path = "./"
 
-# TODO: Check if directory exists and is empty. Don't overwrite.
-# TODO: Check if directory exists. If not, create.
+# Check if directory exists and is empty. Don't overwrite.
+# Check if directory exists. If not, create.
