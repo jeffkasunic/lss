@@ -21,4 +21,4 @@ files = sorted(list(Path(path).iterdir()))
 
 # Sort files into groups
 for file in files:
-    print(file.stem)
+    print(file.name)
