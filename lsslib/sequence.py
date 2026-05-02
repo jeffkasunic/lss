@@ -11,7 +11,7 @@ def seq_create(filename: str, range_start: int = 1, range_end: int = 7, padding:
     """
     for i in range(range_start, range_end + 1, step):
         Path(path + filename + "." + str.rjust(str(i), padding, "0") + ".exr").touch()
-    logger.info(f"Created: {filename}")
+    logger.info(f"  Created {filename}")
 
 
 def seq_rename():
