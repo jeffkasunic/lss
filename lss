@@ -2,11 +2,11 @@
 # Displays file sequences in a compact representation.
 
 import sys
+from configparser import MissingSectionHeaderError
 from pathlib import Path
 import logging
-from traceback import FrameSummary
 
-from lsslib import get_padding, get_unpadded_framenumber, get_endframe, get_startframe
+from lsslib import get_padding, get_unpadded_framenumber, get_endframe, get_startframe, is_contiguous
 
 logger = logging.getLogger("MAIN")
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
@@ -15,29 +15,51 @@ logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(mess
 # Get file path from command line
 try:
     path = sys.argv[1]
+    path += "/"
 except IndexError:
     path = "./"
-logger.info("Reading files: " + path)
+logger.info("Reading files at: " + path)
 
 # Read files into List
-files = sorted(list(Path(path).iterdir()))
+files = []
+for file in Path(path).iterdir():
+    if not file.name.startswith("."):  # ignore hidden files like ls -1 does
+        files.append(file)
+files = sorted(files)
 
-# List file stems
+# TEST: Is the sequence contiguous, store missing values if so.
+
+is_contiguous(files)
+
+
+
+
+
+
+
+# TEST: Print files
 #for file in files:
-#    print(file.stem)
+#    print(file.name)
 
-# Get padding - test
-padding = get_padding(files[39].stem)
-logger.info("Padding: " + str(padding))
+# TEST: Get padding
+#padding = get_padding(files[6].stem)
+#logger.info("File:  " + str(files[6].name))
+#logger.info("Padding: " + str(padding))
 
-# Get unpadded frame number - test
-frame_number = get_unpadded_framenumber(files[39].stem)
-logger.info("Unpadded frame number: " + str(frame_number))
+# TEST: Get unpadded frame number - test
+#frame_number = get_unpadded_framenumber(files[6].stem)
+#logger.info("File:  " + str(files[6].name))
+#logger.info("Unpadded frame number: " + str(frame_number))
 
-# Get start frame number - test
-startframe = get_startframe(files)
-logger.info("Start frame number: " + str(startframe))
+# TEST: Get start frame number - test
+#startframe = get_startframe(files)
+#logger.info("Start frame number: " + str(startframe))
 
-# Get end frame number - test
-endframe = get_endframe(files)
-logger.info("End frame number: " + str(endframe))
+# TEST: Get end frame number - test
+#endframe = get_endframe(files)
+#logger.info("End frame number: " + str(endframe))
+
+# TEST: Get missing frames in a sequence
+
+# TEST: Get steps
+# Will probably have to use modulus?

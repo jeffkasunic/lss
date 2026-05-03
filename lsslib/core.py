@@ -47,30 +47,32 @@ def get_endframe(files):
     return max(frames)
 
 
-def get_stepnumber():
+def get_stepnumber(frame_range):
     """
     Get the step number in an array of integers.
     """
     return None
 
 
-def is_contiguous():
+def is_contiguous(files):
     """
     Is this a contiguous sequence?
     """
-    return None
+    frame_range = list(range((get_startframe(files)), (get_endframe(files) + 1)))
+
+    if len(frame_range) != len(files):
+        contiguous = False
+        logger.info("There are missing frames.")
+    else:
+        contiguous = True
+        logger.info("The sequence is contiguous.")
+    
+    return contiguous
 
 
-def is_missing_frame():
+def get_missing_frames(frame_range):
     """
     Get the missing frame in an array of integers.
     """
     return None
-
-
-def get_identical_string():
-    """
-    Find left justified identical, matching chars. Used to find grouping.
-    It compares the current item to the previous item in the array.
-    """
 
