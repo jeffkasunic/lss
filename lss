@@ -4,8 +4,9 @@
 import sys
 from pathlib import Path
 import logging
+from traceback import FrameSummary
 
-from lsslib import get_padding, get_unpadded_framenumber
+from lsslib import get_padding, get_unpadded_framenumber, get_endframe, get_startframe
 
 logger = logging.getLogger("MAIN")
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
@@ -22,13 +23,21 @@ logger.info("Reading files: " + path)
 files = sorted(list(Path(path).iterdir()))
 
 # List file stems
-for file in files:
-    print(file.stem)
+#for file in files:
+#    print(file.stem)
 
-# Get padding
+# Get padding - test
 padding = get_padding(files[39].stem)
 logger.info("Padding: " + str(padding))
 
-# Get unpadded frame number
+# Get unpadded frame number - test
 frame_number = get_unpadded_framenumber(files[39].stem)
 logger.info("Unpadded frame number: " + str(frame_number))
+
+# Get start frame number - test
+startframe = get_startframe(files)
+logger.info("Start frame number: " + str(startframe))
+
+# Get end frame number - test
+endframe = get_endframe(files)
+logger.info("End frame number: " + str(endframe))

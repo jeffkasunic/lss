@@ -18,9 +18,7 @@ except IndexError:
     path = "./"
 logger.info("Creating files at: " + path)
 
-# Check if file path directory exists.
-# It's lame that I'm putting "/" after every path argument.
-if Path(path).is_dir():
+if Path(path).is_dir():  # Check if file path directory exists.
     # Create a contigous sequenece of files with 4-padded frames.
     seq_create("seq100", range_start=0, range_end=4, path=(path + "/"))
     
@@ -44,3 +42,5 @@ if Path(path).is_dir():
 else:
     logger.error("Path does not exist. No files created.")
     sys.exit(1)
+
+# FIX: It's lame that I'm putting "/" after every path argument.
