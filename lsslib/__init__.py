@@ -4,8 +4,8 @@ __version__ = "0.1.0"
 import logging
 
 from .sequence import seq_create, seq_rename
-from .core import (get_unpadded_framenumber, get_padding, get_startframe, get_endframe, get_stepnumber, 
-                   get_missing_frames, is_contiguous)
+from .core import (get_unpadded_framenumber, get_padding, get_startframe, get_endframe, get_frame_range,
+                   get_stepnumber, get_missing_frames, is_contiguous)
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())

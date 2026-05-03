@@ -5,8 +5,9 @@ import sys
 from configparser import MissingSectionHeaderError
 from pathlib import Path
 import logging
+from sys import is_stack_trampoline_active
 
-from lsslib import get_padding, get_unpadded_framenumber, get_endframe, get_startframe, is_contiguous
+from lsslib import get_padding, get_unpadded_framenumber, get_endframe, get_startframe, get_frame_range, is_contiguous, get_missing_frames
 
 logger = logging.getLogger("MAIN")
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
@@ -20,46 +21,9 @@ except IndexError:
     path = "./"
 logger.info("Reading files at: " + path)
 
-# Read files into List
+# Read files into a list and sort
 files = []
 for file in Path(path).iterdir():
     if not file.name.startswith("."):  # ignore hidden files like ls -1 does
         files.append(file)
 files = sorted(files)
-
-# TEST: Is the sequence contiguous, store missing values if so.
-
-is_contiguous(files)
-
-
-
-
-
-
-
-# TEST: Print files
-#for file in files:
-#    print(file.name)
-
-# TEST: Get padding
-#padding = get_padding(files[6].stem)
-#logger.info("File:  " + str(files[6].name))
-#logger.info("Padding: " + str(padding))
-
-# TEST: Get unpadded frame number - test
-#frame_number = get_unpadded_framenumber(files[6].stem)
-#logger.info("File:  " + str(files[6].name))
-#logger.info("Unpadded frame number: " + str(frame_number))
-
-# TEST: Get start frame number - test
-#startframe = get_startframe(files)
-#logger.info("Start frame number: " + str(startframe))
-
-# TEST: Get end frame number - test
-#endframe = get_endframe(files)
-#logger.info("End frame number: " + str(endframe))
-
-# TEST: Get missing frames in a sequence
-
-# TEST: Get steps
-# Will probably have to use modulus?
