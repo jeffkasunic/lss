@@ -6,8 +6,8 @@ from ftplib import test
 from pathlib import Path
 import logging
 
-from lsslib import (get_padding, get_unpadded_framenumber, get_endframe, get_startframe, get_frame_range_total,
-                    is_contiguous, get_missing_frames)
+from lsslib import (get_padding, is_contiguous, get_missing_frames,
+                    get_endframe, get_startframe, get_frame_range_total)
 
 logger = logging.getLogger("MAIN")
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
@@ -28,14 +28,7 @@ for file in Path(path).iterdir():
         files.append(file)
 files = sorted(files)
 
-# TEST
-get_startframe(files)
-get_endframe(files)
-get_frame_range_total(files)
-test = is_contiguous(files)
-get_padding(files)
+if not files:
+    logger.error("No files found")
+    sys.exit(1)
 
-logger.info("start frame: " + str(get_startframe(files)))
-logger.info("end frame: " + str(get_endframe(files)))
-logger.info("frame range total: " + str(get_frame_range_total(files)))
-logger.info(f"Is contiguous: {test}")
