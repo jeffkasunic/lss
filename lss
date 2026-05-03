@@ -2,12 +2,12 @@
 # Displays file sequences in a compact representation.
 
 import sys
-from configparser import MissingSectionHeaderError
+from ftplib import test
 from pathlib import Path
 import logging
-from sys import is_stack_trampoline_active
 
-from lsslib import get_padding, get_unpadded_framenumber, get_endframe, get_startframe, get_frame_range, is_contiguous, get_missing_frames
+from lsslib import (get_padding, get_unpadded_framenumber, get_endframe, get_startframe, get_frame_range_total,
+                    is_contiguous, get_missing_frames)
 
 logger = logging.getLogger("MAIN")
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
@@ -27,3 +27,15 @@ for file in Path(path).iterdir():
     if not file.name.startswith("."):  # ignore hidden files like ls -1 does
         files.append(file)
 files = sorted(files)
+
+# TEST
+get_startframe(files)
+get_endframe(files)
+get_frame_range_total(files)
+test = is_contiguous(files)
+get_padding(files)
+
+logger.info("start frame: " + str(get_startframe(files)))
+logger.info("end frame: " + str(get_endframe(files)))
+logger.info("frame range total: " + str(get_frame_range_total(files)))
+logger.info(f"Is contiguous: {test}")

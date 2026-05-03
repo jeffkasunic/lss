@@ -46,20 +46,20 @@ def get_endframe(files):
         frames.append(get_unpadded_framenumber(file.stem))
     return max(frames)
 
-def get_frame_range (files):
-    frame_range = (get_endframe(files) - get_startframe(files) + 1)
-    logger.info(f"The frame range is {frame_range}")
+def get_frame_range_total (files):
+    frame_range_total = (get_endframe(files) - get_startframe(files) + 1)
+    logger.info(f"The frame range total is {frame_range_total}")
     
-    return frame_range
+    return frame_range_total
 
 
 def is_contiguous(files):
     """
     Is this a contiguous sequence?
     """
-    frame_range = get_frame_range(files)
-
-    if frame_range != len(files):
+    frame_range_total = get_frame_range_total(files)
+    
+    if frame_range_total != len(files):
         contiguous = False
         logger.info("There are missing frames.")
     else:
@@ -73,9 +73,21 @@ def get_missing_frames(files):
     """
     Get the missing frame in an array of integers.
     """
+    #frame_range_total = get_frame_range_total(files)
+    frames = get_unpadded_framenumber(files)
     
     missing_frames = []
     i = 0
+    
+    """
+    while i < frame_range_total:
+        if files[frames] == files[frames + 1] - 1:
+            frames += 1
+        else:
+            missing_frames.append(i+1)
+    """
+     
+    
     
     
     return missing_frames
