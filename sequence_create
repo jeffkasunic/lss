@@ -19,6 +19,7 @@ except IndexError:
 logger.info("Creating files at: " + path)
 
 # Check if file path directory exists.
+# It's lame that I'm putting "/" after every path argument.
 if Path(path).is_dir():
     # Create a contigous sequenece of files with 4-padded frames.
     seq_create("seq100", range_start=0, range_end=4, path=(path + "/"))
@@ -35,7 +36,10 @@ if Path(path).is_dir():
     seq_create("seq3600", range_start=1, range_end=3, padding=4, path=(path + "/"))
     
     # Create a sequence a non-padded sequence.
-    seq_create("seq3800", range_start=0, range_end=3, padding=0, path=(path + "/"))
+    seq_create("seq3800", range_start=0, range_end=12, padding=0, path=(path + "/"))
+    
+    # Create other formatted files.
+    seq_create("2000.0220.bty_env_01", range_start=0, range_end=15, path=(path + "/"))
 
 else:
     logger.error("Path does not exist. No files created.")
