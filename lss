@@ -32,3 +32,7 @@ if not files:
     logger.error("No files found")
     sys.exit(1)
 
+
+# Test
+test = get_missing_frames(files)
+print(test)

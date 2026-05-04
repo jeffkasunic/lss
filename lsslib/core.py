@@ -44,19 +44,17 @@ def get_missing_frames(files):
     """
     Get the missing frame in an array of integers.
     """
-    #frame_range_total = get_frame_range_total(files)
-    frames = _get_unpadded_framenumber(files)
-    
+    frames = []
+    for file in files:
+        frames.append(_get_unpadded_framenumber(file.stem))
+        
     missing_frames = []
-    i = 0
-    
-    """
-    while i < frame_range_total:
-        if files[frames] == files[frames + 1] - 1:
-            frames += 1
+    for i in range(1, len(frames)):
+        if frames[i] == frames[i-1] + 1:
+            continue
         else:
-            missing_frames.append(i+1)
-    """    
+            missing_frames.append(frames[i] - 1)
+    logger.info(f"Missing frame(s) {missing_frames}")
     return missing_frames
 
 
