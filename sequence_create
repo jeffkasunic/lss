@@ -21,24 +21,24 @@ logger.info("Creating files at: " + path)
 
 if Path(path).is_dir():  # Check if file path directory exists.
     # Create a contigous sequenece of files with 4-padded frames.
-    seq_create("seq100", range_start=0, range_end=30, path=path)
+    seq_create("seq100", range_start=0, range_end=10, path=path)
     
     # Create a discontigous sequence of files with 4-padded frames.
-    #seq_create("seq1600", range_start=1, range_end=3, path=path)
-    #seq_create("seq1600", range_start=5, range_end=7, path=path)
+    seq_create("seq1600", range_start=1, range_end=3, path=path)
+    seq_create("seq1600", range_start=5, range_end=7, path=path)
     
     # Create a sequence of files with step of 5.
-    #seq_create("seq2000", range_start=0, range_end=15, step=5, path=path)
+    seq_create("seq2000", range_start=0, range_end=15, step=5, path=path)
     
     # Create a sequence of files with frames of different padding.
-    #seq_create("seq3600", range_start=1, range_end=3, padding=3, path=path)
-    #seq_create("seq3600", range_start=1, range_end=3, padding=4, path=path)
+    seq_create("seq3600", range_start=1, range_end=3, padding=3, path=path)
+    seq_create("seq3600", range_start=1, range_end=3, padding=4, path=path)
     
     # Create a sequence a non-padded sequence.
-    #seq_create("seq3800", range_start=0, range_end=12, padding=0, path=path)
+    seq_create("seq3800", range_start=0, range_end=12, padding=0, path=path)
     
     # Create other formatted files.
-    #seq_create("2000.0220.bty_env_01", range_start=0, range_end=15, path=path)
+    seq_create("2000.0220.bty_env_01", range_start=0, range_end=15, path=path)
 
 else:
     logger.error("Path does not exist. No files created.")

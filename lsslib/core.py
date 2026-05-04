@@ -1,4 +1,5 @@
 import logging
+from difflib import Differ
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,33 @@ def is_contiguous(files):
     
     return contiguous
 
+
+def is_stepped(files):
+    """
+    Is this a stepped sequence?
+    There has to be a more elegant way to do this function.
+    """
+    frames = []
+    for file in files:
+        frames.append(_get_unpadded_framenumber(file.stem))
+    logger.info(frames)
+
+    # Find the difference between frame numbers
+    differences = []
+    for i in range(1, len(frames)):
+        differences.append(frames[i] - frames[i-1])
+    logger.info(f"The difference between frames is: {differences}")
+
+    # Test to make sure the difference is the same for all frames
+    comparisons = []
+    for diff in differences:
+        comparisons.append(diff == differences[0])  # Generate a True or False list
+    if all(comparisons):  # If all comparisons are True
+        logger.info("The sequence is stepped.")
+        return differences[0]
+    else:
+        logger.info("The sequence is not stepped.")
+        return False
 
 def get_missing_frames(files):
     """

@@ -2,11 +2,10 @@
 # Displays file sequences in a compact representation.
 
 import sys
-from ftplib import test
 from pathlib import Path
 import logging
 
-from lsslib import (get_padding, is_contiguous, get_missing_frames,
+from lsslib import (get_padding, is_contiguous, is_stepped, get_missing_frames,
                     get_endframe, get_startframe, get_frame_range_total)
 
 logger = logging.getLogger("MAIN")
@@ -32,7 +31,11 @@ if not files:
     logger.error("No files found")
     sys.exit(1)
 
-
-# Test
-test = get_missing_frames(files)
+is_contiguous = is_contiguous(files)
+test = is_stepped(files)
 print(test)
+
+# List files in thw directory
+
+
+
