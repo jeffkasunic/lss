@@ -60,6 +60,8 @@ if step_size == 5:
 
 # Sequences of files whose frames have different padding
 
+# This will be solved when I figure out how to handle all of these mixed together in one dir.
+# Each padded seq will have to be in own dictionary.
 
 
 # A non-padded sequence
