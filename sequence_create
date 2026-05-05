@@ -22,7 +22,7 @@ logger.info("Creating files at: " + path)
 if Path(path).is_dir():  # Check if file path directory exists.
     # Create a contigous sequenece of files with 4-padded frames.
     seq_create("seq100", range_start=0, range_end=10, path=path)
-    
+
     # Create a discontigous sequence of files with 4-padded frames.
     seq_create("seq1600", range_start=1, range_end=3, path=path)
     seq_create("seq1600", range_start=5, range_end=7, path=path)

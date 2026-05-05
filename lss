@@ -27,15 +27,28 @@ for file in Path(path).iterdir():
         files.append(file)
 files = sorted(files)
 
+# Check if there's files present
 if not files:
     logger.error("No files found")
     sys.exit(1)
 
-is_contiguous = is_contiguous(files)
-test = is_stepped(files)
-print(test)
+# I am assuming multiple sequence types will be located in the same directory, and will need to parse into groups.
+#
+# Sort file sequences into groups using hash table data structure.
+# Uses the variable-size sliding window algorithm to find the grouping key. This will find the
+# longest subarray before a different char appears. Only need to compare to next line, since sorted.
 
-# List files in thw directory
+
+
+
+
+
+
+# Print file sequences
+print(files)
+
+
+
 
 
 
