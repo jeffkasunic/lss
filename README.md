@@ -21,7 +21,7 @@ It will create five small sequences of files:
 
 
 # Requirements
-The scripts are compatible with Python 2, but on Linux and MacOS systems, the script assumes Python3 is installed.
+The script assumes Python3 is installed.
 
 For Linux and MacOS, execute from the command line: ``lss`` or ``sequence_create``.
 

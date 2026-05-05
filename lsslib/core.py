@@ -3,6 +3,7 @@ from difflib import Differ
 
 logger = logging.getLogger(__name__)
 
+# Public
 
 def get_padding(files):
     """
@@ -29,7 +30,7 @@ def is_contiguous(files):
     """
     Is this a contiguous sequence?
     """
-    frame_range_total = get_frame_range_total(files)
+    frame_range_total = _get_frame_range_total(files)
     
     if frame_range_total != len(files):
         contiguous = False
@@ -41,15 +42,21 @@ def is_contiguous(files):
     return contiguous
 
 
-def is_stepped(files):
+def get_step_size(files):
     """
     Is this a stepped sequence?
     There has to be a more elegant way to do this function.
+    
+    TO FIX: When paddding is 0 and seqience range is > 9, step detection fails.
+    Example: on a sequence frames, 0-12
+    The difference between frames is: [1, 9, 1, 1, -10, 1, 1, 1, 1, 1, 1, 1].
+    The problem is that my files are being sorted lexicographically.
+    This doesn't cause any issues with the program because of the way I use the function.
+    
     """
     frames = []
     for file in files:
         frames.append(_get_unpadded_framenumber(file.stem))
-    logger.info(frames)
 
     # Find the difference between frame numbers
     differences = []
@@ -62,7 +69,7 @@ def is_stepped(files):
     for diff in differences:
         comparisons.append(diff == differences[0])  # Generate a True or False list
     if all(comparisons):  # If all comparisons are True
-        logger.info("The sequence is stepped.")
+        logger.info(f"The step size is: {differences[0]} ")
         return differences[0]
     else:
         logger.info("The sequence is not stepped.")
@@ -71,6 +78,11 @@ def is_stepped(files):
 def get_missing_frames(files):
     """
     Get the missing frame in an array of integers.
+    
+    TO FIX: On a stepped sequence it only detects the missing frame before the current frame.
+    For example: Missing frame numbers: [4, 9, 14] is the result for stepped sequence of 5.
+    It does not break the stepped check, but it won't not work for sequences with more than one
+    contiguous missing file.
     """
     frames = []
     for file in files:
@@ -82,7 +94,7 @@ def get_missing_frames(files):
             continue
         else:
             missing_frames.append(frames[i] - 1)
-    logger.info(f"Missing frame(s) {missing_frames}")
+    logger.info(f"Missing frame numbers: {missing_frames}")
     return missing_frames
 
 
@@ -119,13 +131,6 @@ def get_endframe(files):
     return endframe
 
 
-def get_frame_range_total (files):
-    frame_range_total = (get_endframe(files) - get_startframe(files) + 1)
-    logger.info(f"The frame range total is {frame_range_total}")
-
-    return frame_range_total
-
-
 # Private
 
 def _get_unpadded_framenumber(filename):
@@ -135,3 +140,9 @@ def _get_unpadded_framenumber(filename):
     frame_number = int(filename.split('.')[-1])
 
     return frame_number
+
+def _get_frame_range_total (files):
+    frame_range_total = (get_endframe(files) - get_startframe(files) + 1)
+    logger.info(f"The frame range total is {frame_range_total}")
+
+    return frame_range_total

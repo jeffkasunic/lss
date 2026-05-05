@@ -38,7 +38,7 @@ if Path(path).is_dir():  # Check if file path directory exists.
     seq_create("seq3800", range_start=0, range_end=12, padding=0, path=path)
     
     # Create other formatted files.
-    seq_create("2000.0220.bty_env_01", range_start=0, range_end=15, path=path)
+    # seq_create("2000.0220.bty_env_01", range_start=0, range_end=15, path=path)
 
 else:
     logger.error("Path does not exist. No files created.")

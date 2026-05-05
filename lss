@@ -5,8 +5,8 @@ import sys
 from pathlib import Path
 import logging
 
-from lsslib import (get_padding, is_contiguous, is_stepped, get_missing_frames,
-                    get_endframe, get_startframe, get_frame_range_total)
+from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames,
+                    get_endframe, get_startframe)
 
 logger = logging.getLogger("MAIN")
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
@@ -32,23 +32,38 @@ if not files:
     logger.error("No files found")
     sys.exit(1)
 
-# I am assuming multiple sequence types will be located in the same directory, and will need to parse into groups.
-#
-# Sort file sequences into groups using hash table data structure.
-# Uses the variable-size sliding window algorithm to find the grouping key. This will find the
-# longest subarray before a different char appears. Only need to compare to next line, since sorted.
+# Get file name and sequence characteristics first
+
+startframe = get_startframe(files)
+endframe = get_endframe(files)
+padding = get_padding(files)
+is_contiguous = is_contiguous(files)
+step_size = get_step_size(files)
+if not is_contiguous or step_size != 1:
+    missing_frames = get_missing_frames(files)
+
+# Print file sequence
+
+file = files[0]
+# Contiguos, Step 1
+if is_contiguous and step_size == 1 and padding > 0:
+    print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{endframe}#{padding}"))
+
+# Discontiguous sequence, Step 1
+if not is_contiguous and not step_size:
+    print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{missing_frames[0] - 1},{missing_frames[0] + 1}-{endframe}#{padding}"))
+# TO FIX: This only account for first missing frame.
+
+# A sequence of files with a stride length
+if step_size == 5:
+    print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{endframe}x{step_size}#{padding}"))
+
+# Sequences of files whose frames have different padding
 
 
 
-
-
-
-
-# Print file sequences
-print(files)
-
-
-
-
-
-
+# A non-padded sequence
+if is_contiguous and step_size == 1 and padding == 0:
+    logger.info(str(file.name))
+    print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{endframe}#{padding}"))
+# TO FIX: Does not work when sequence begins with 0.
