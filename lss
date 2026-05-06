@@ -2,6 +2,7 @@
 # Displays file sequences in a compact representation.
 
 import sys
+import os
 from pathlib import Path
 import logging
 from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames,
@@ -19,6 +20,11 @@ except IndexError:
     path = "./"
 logger.info("Reading files at: " + path)
 
+if not os.path.isdir(path):
+    logger.error("No directory found")
+    sys.exit("Directory does not exist")
+    sys.exit(1)
+    
 # Read files into a list and sort
 files = []
 for file in Path(path).iterdir():
@@ -54,17 +60,21 @@ for sequence in dictionary:
 
     # Logic statements for printing
     first_file = files_in_sequence[0]
+    # A sequence of files with a stride length.
     if not contiguous and step_size > 1:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}x{step_size}#{padding}")
         print(first_file_metadata)
         logger.info("-----------------------------------------------")
         continue
     if not contiguous and step_size == False:
+        # A discontiguous sequence of files with 4-padded frames.
+        # TO FIX: Needs to be for loop to get all niising frames.
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{missing_frames[0] - 1},{missing_frames[0] + 1}-{endframe}#{padding}")
         print(first_file_metadata)
         logger.info("-----------------------------------------------")
         continue
     else:
+        # A contiguous sequence of files with 4-padded frames.
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
         print(first_file_metadata)
         logger.info("-----------------------------------------------")
@@ -74,5 +84,6 @@ for sequence in dictionary:
     
 # TO FIX: mixed padding directories
 # TO FIX: padding 0 frames can't start at 0. Or go over 9.
-        
+# TO FIX: find_key() is using .stem stuff. Fix, even though not in use.
+
         

@@ -81,22 +81,21 @@ def get_missing_frames(files):
     Get the missing frame in an array of integers.
     """
 
-    # TO FIX: On a stepped sequence it only detects the missing frame before the current frame.
-    # For example: Missing frame numbers: [4, 9, 14] is the result for stepped sequence of 5.
-    # It does not break the stepped check, but it won't not work for sequences with more than one
-    # contiguous missing file.
-    
-    
     frames = []
     for file in files:
         frames.append(_get_unpadded_framenumber(file))
-        
+    
+    frame_range = _get_frame_range_total(files)
+    
+    logger.info(f"The length of frames is {len(frames)}")
+    logger.info(f"The frame range is {frame_range}")
+    logger.info(f"The frames are: {frames}")
+
     missing_frames = []
-    for i in range(1, len(frames)):
-        if frames[i] == frames[i-1] + 1:
-            continue
-        else:
-            missing_frames.append(frames[i] - 1)
+    for i in range(1, frame_range):
+        if i not in frames:
+            missing_frames.append(i)
+    
     logger.info(f"Missing frame numbers: {missing_frames}")
     return missing_frames
 
@@ -190,8 +189,6 @@ def group_keys(files):
     for frame in frames:
             key = frame.rsplit('.', 2)[0]
             grouped_keys[key].append(frame)
-            #logger.info(f"The key is {key}")
-            #logger.info(f"The grouped key is {grouped_keys}")
         
     return grouped_keys
 
