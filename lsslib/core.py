@@ -1,5 +1,5 @@
 import logging
-from html.parser import charref
+from unittest import TestResult
 
 logger = logging.getLogger(__name__)
 
@@ -146,18 +146,26 @@ def find_key(files):
     frames = []
     for file in files:
         frames.append(file.name)
+
     logger.info(f"The file are {frames}")
     logger.info(f"length of frame[0]: {len(frames[0])} ")
     logger.info(f"frame[0]: {frames[0]} ")
 
-    for i in range(0, len(frames[0])):  # get the length of the first
+    longest_filename_in_dir = _get_longest_filename(files)
+    logger.info(f"The longest filename is {longest_filename_in_dir} chars")
+
+    for i in range(0, longest_filename_in_dir):  # get the length of the first element
         char = frames[0][i]  # Get first char of first string
         for j in range(1, len(frames)):  # Start at second element in the list and compare to first
-            if frames[j][i] != char or i == len(frames[j]):
+            if frames[j][i] != char or i == len(frames[j]):  
                 seq_key = frames[0][0:i]  # assign all chars that are same
                 return seq_key
             else:
                 continue
+    return None
+
+def group_keys(keys):
+    
     return None
 
 
@@ -176,3 +184,6 @@ def _get_frame_range_total (files):
     logger.info(f"The frame range total is {frame_range_total}")
 
     return frame_range_total
+
+def _get_longest_filename(files):
+    return max(len(file.stem) for file in files)

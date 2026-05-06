@@ -44,7 +44,8 @@ if not is_contiguous or step_size != 1:
 
 
 seq_key = find_key(files)
-logger.info(str(seq_key))
+logger.info(seq_key)
+
 
 
 
