@@ -1,5 +1,5 @@
 import logging
-from unittest import TestResult
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -134,11 +134,19 @@ def find_key(files):
     """
     Find the longest common prefix in a sequence of files.
     """
-    # This uses a vertical scanning approach where I compare chars in one element to the next
-    # element, one at a time, until I find a change between two. This only works on a sorted list.
+    # My initial attempts inolved a sliding window algorithm, using a vertical scanning approach where I compare
+    # chars in one element to the next element, one at a time, until I find a change between two. This only works on a sorted list. 
     # 
-    # My initial attempts inolved a sliding window algorithm, but then realized only the right pointer
-    # moves in this case. The solution morphed into a simpler Longest Common Prefix algorithm 
+    # But then I realized only the right pointer moves in this case. The solution morphed into a simpler Longest Common Prefix algorithm.
+    # 
+    # But in the end, I realized all I had to do was iterate from the end of the filename, using "." as the delimiter.
+    # Everything before the first two "." encountered is the key.
+    #
+    # I was trying to account for all possible naming conventions and delimiters, but settled on enforcing this: filename.anyting.anything
+    # That will be version 2.0.
+    #
+    # This function is no longer used in this script.
+    
     
     logger.info(f"Finding key.")
     logger.info(f"The number of files is {len(files)}")
@@ -154,19 +162,42 @@ def find_key(files):
     longest_filename_in_dir = _get_longest_filename(files)
     logger.info(f"The longest filename is {longest_filename_in_dir} chars")
 
-    for i in range(0, longest_filename_in_dir):  # get the length of the first element
-        char = frames[0][i]  # Get first char of first string
-        for j in range(1, len(frames)):  # Start at second element in the list and compare to first
-            if frames[j][i] != char or i == len(frames[j]):  
-                seq_key = frames[0][0:i]  # assign all chars that are same
+    for i in range(0, longest_filename_in_dir):
+        char = frames[0][i] 
+        for j in range(1, len(frames)):  
+            if frames[j][i] != char or i == len(frames[j]):
+                seq_key = frames[0][0:i] 
                 return seq_key
             else:
                 continue
     return None
 
-def group_keys(keys):
+def group_keys(files):
+    """
+    Group sequences of files into a hash table / dictionary.
     
-    return None
+    Assumes the filename is formatted: any_text_delimter_or_numer.number.filetension
+        Examples:
+            FooA.0000.exr
+            2000.0220.bty_env_01.0001.exr
+    """
+    # Iterates from the end of the filename, using "." as the delimiter. Everything after the
+    # first two "." encountered is the key.
+
+    grouped_keys = defaultdict(list)
+
+    frames = []
+    for file in files:
+        frames.append(file.name)
+    logger.info(f"The file are {frames}")
+    
+    for frame in frames:
+        key = frame.rsplit('.', 2)[0]
+        grouped_keys[key].append(frame)
+        logger.info(f"The key is {key}")
+        logger.info(f"The grouped key is {grouped_keys}")
+    
+    return grouped_keys
 
 
 # Private
@@ -186,4 +217,5 @@ def _get_frame_range_total (files):
     return frame_range_total
 
 def _get_longest_filename(files):
+    
     return max(len(file.stem) for file in files)
