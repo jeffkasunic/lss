@@ -22,7 +22,7 @@ def get_padding(files):
         p = 0  #Zero-padded
     else:
         p = len(padding[0])
-    logger.info(f"The padding is {p}")
+    logger.info(f"The padding for {padding} is {p}")
     
     return p
 
@@ -79,12 +79,14 @@ def get_step_size(files):
 def get_missing_frames(files):
     """
     Get the missing frame in an array of integers.
-    
-    TO FIX: On a stepped sequence it only detects the missing frame before the current frame.
-    For example: Missing frame numbers: [4, 9, 14] is the result for stepped sequence of 5.
-    It does not break the stepped check, but it won't not work for sequences with more than one
-    contiguous missing file.
     """
+
+    # TO FIX: On a stepped sequence it only detects the missing frame before the current frame.
+    # For example: Missing frame numbers: [4, 9, 14] is the result for stepped sequence of 5.
+    # It does not break the stepped check, but it won't not work for sequences with more than one
+    # contiguous missing file.
+    
+    
     frames = []
     for file in files:
         frames.append(_get_unpadded_framenumber(file))
@@ -99,13 +101,6 @@ def get_missing_frames(files):
     return missing_frames
 
 
-def get_stepnumber(frame_range):
-    """
-    Get the step number in an array of integers.
-    """
-    return None
-
-
 def get_startframe(files):
     """
     Get the min value in an array of integers.
@@ -114,7 +109,7 @@ def get_startframe(files):
     for file in files:
         frames.append(_get_unpadded_framenumber(file))
     startframe = min(frames)
-    logger.info(f"The startframe is {startframe}")
+    logger.info(f"The startframe for {frames} is {startframe}")
 
     return startframe
 
@@ -127,7 +122,7 @@ def get_endframe(files):
     for file in files:
         frames.append(_get_unpadded_framenumber(file))
     endframe = max(frames)
-    logger.info(f"The endframe is {endframe}")
+    logger.info(f"The endframe {frames} is {endframe}")
     
     return endframe
 
@@ -208,7 +203,7 @@ def _get_unpadded_framenumber(filename):
     Get the current frame number with padding removed.
     """
     frame_number = int(filename.split('.')[-2])
-    logger.info(f"The unpadded frame_number is {frame_number}")
+    logger.info(f"The unpadded frame_number for {filename} is {frame_number}")
 
     return frame_number
 
