@@ -6,7 +6,7 @@ from pathlib import Path
 import logging
 
 from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames,
-                    get_endframe, get_startframe)
+                    get_endframe, get_startframe, find_key)
 
 logger = logging.getLogger("MAIN")
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
@@ -42,6 +42,15 @@ step_size = get_step_size(files)
 if not is_contiguous or step_size != 1:
     missing_frames = get_missing_frames(files)
 
+
+seq_key = find_key(files)
+logger.info(str(seq_key))
+
+
+
+
+"""
+
 # Print file sequence
 
 file = files[0]
@@ -69,3 +78,5 @@ if is_contiguous and step_size == 1 and padding == 0:
     logger.info(str(file.name))
     print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{endframe}#{padding}"))
 # TO FIX: Does not work when sequence begins with 0.
+
+"""

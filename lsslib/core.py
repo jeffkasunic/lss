@@ -1,5 +1,5 @@
 import logging
-from difflib import Differ
+from html.parser import charref
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +129,36 @@ def get_endframe(files):
     logger.info(f"The endframe is {endframe}")
     
     return endframe
+
+def find_key(files):
+    """
+    Find the longest common prefix in a sequence of files.
+    """
+    # This uses a vertical scanning approach where I compare chars in one element to the next
+    # element, one at a time, until I find a change between two. This only works on a sorted list.
+    # 
+    # My initial attempts inolved a sliding window algorithm, but then realized only the right pointer
+    # moves in this case. The solution morphed into a simpler Longest Common Prefix algorithm 
+    
+    logger.info(f"Finding key.")
+    logger.info(f"The number of files is {len(files)}")
+    
+    frames = []
+    for file in files:
+        frames.append(file.name)
+    logger.info(f"The file are {frames}")
+    logger.info(f"length of frame[0]: {len(frames[0])} ")
+    logger.info(f"frame[0]: {frames[0]} ")
+
+    for i in range(0, len(frames[0])):  # get the length of the first
+        char = frames[0][i]  # Get first char of first string
+        for j in range(1, len(frames)):  # Start at second element in the list and compare to first
+            if frames[j][i] != char or i == len(frames[j]):
+                seq_key = frames[0][0:i]  # assign all chars that are same
+                return seq_key
+            else:
+                continue
+    return None
 
 
 # Private
