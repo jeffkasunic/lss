@@ -196,6 +196,9 @@ def group_keys(files):
         grouped_keys[key].append(frame)
         logger.info(f"The key is {key}")
         logger.info(f"The grouped key is {grouped_keys}")
+        
+    
+    
     
     return grouped_keys
 

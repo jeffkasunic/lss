@@ -4,13 +4,14 @@
 import sys
 from pathlib import Path
 import logging
-
+from typing import KeysView
+from unittest import TestProgram
 
 from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames,
                     get_endframe, get_startframe, find_key, group_keys, sequence)
 
 logger = logging.getLogger("MAIN")
-logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
+logging.basicConfig(level=logging.WARN, format="[%(levelname)s %(name)s]: %(message)s")
 
 
 # Get file path from command line
@@ -43,50 +44,16 @@ step_size = get_step_size(files)
 if not is_contiguous or step_size != 1:
     missing_frames = get_missing_frames(files)
 
-# Read the directory and group the files into a hash table/dictionary
+
+# Read the files and group them into a hash table/dictionary
 keys = group_keys(files)
 
-# Get the key values. FooA, seq100, seq2000, etc
-sequence = []
+# Get the keys. FooA, seq100, seq2000, etc
+sequences = []
 for key in keys:
-    sequence.append(key)
-logger.info(f"The keys are: {sequence}")
+    sequences.append(key)
+logger.info(f"The keys are: {sequences}")
 
-for i in range(len(sequence)):
-    for file in keys[sequence[i]]:
-        print(file)
-
-
-
-
-"""
-
-# Print file sequence
-
-file = files[0]
-# Contiguos, Step 1
-if is_contiguous and step_size == 1 and padding > 0:
-    print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{endframe}#{padding}"))
-
-# Discontiguous sequence, Step 1
-if not is_contiguous and not step_size:
-    print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{missing_frames[0] - 1},{missing_frames[0] + 1}-{endframe}#{padding}"))
-# TO FIX: This only account for first missing frame.
-
-# A sequence of files with a stride length
-if step_size == 5:
-    print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{endframe}x{step_size}#{padding}"))
-
-# Sequences of files whose frames have different padding
-
-# This will be solved when I figure out how to handle all of these mixed together in one dir.
-# Each padded seq will have to be in own dictionary.
-
-
-# A non-padded sequence
-if is_contiguous and step_size == 1 and padding == 0:
-    logger.info(str(file.name))
-    print(str(file.name).replace(file.stem.split(".")[-1], f"{startframe}-{endframe}#{padding}"))
-# TO FIX: Does not work when sequence begins with 0.
-
-"""
+# Print file sequences in a compact representation.
+for key in keys:
+    print(keys[key][0])
