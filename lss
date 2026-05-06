@@ -44,13 +44,24 @@ logger.info(f"The keys are: {sequences}")
 for sequence in dictionary:
     files_in_sequence = dictionary[sequence]
     
+    # Get sequence metadata.
     startframe = get_startframe(dictionary[sequence])
     endframe = get_endframe(dictionary[sequence])
     padding = get_padding(dictionary[sequence])
     step_size = get_step_size(dictionary[sequence])
-    
-    first_file = files_in_sequence[0]
-    first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
-    print(first_file_metadata)
+    contiguous = is_contiguous(dictionary[sequence])
+    if not contiguous:
+        missing_frames = get_missing_frames(dictionary[sequence])
 
-    # The above will need if statement logic.
+    # Logic statements for printing
+    first_file = files_in_sequence[0]
+    if step_size > 1:
+        first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}x{step_size}#{padding}")
+        print(first_file_metadata)
+    if not contiguous:
+        first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{missing_frames[0] - 1},{missing_frames[0] + 1}-{endframe}#{padding}")
+        print(first_file_metadata)
+    else:
+        first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
+        print(first_file_metadata)
+

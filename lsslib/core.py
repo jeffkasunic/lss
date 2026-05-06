@@ -45,15 +45,16 @@ def is_contiguous(files):
 def get_step_size(files):
     """
     Is this a stepped sequence?
-    There has to be a more elegant way to do this function.
-    
-    TO FIX: When paddding is 0 and seqience range is > 9, step detection fails.
-    Example: on a sequence frames, 0-12
-    The difference between frames is: [1, 9, 1, 1, -10, 1, 1, 1, 1, 1, 1, 1].
-    The problem is that my files are being sorted lexicographically.
-    This doesn't cause any issues with the program because of the way I use the function.
-    
     """
+    
+    # There has to be a more elegant way to do this function.
+    #
+    # TO FIX: When paddding is 0 and seqience range is > 9, step detection fails.
+    # Example: on a sequence frames, 0-12
+    # The difference between frames is: [1, 9, 1, 1, -10, 1, 1, 1, 1, 1, 1, 1].
+    # The problem is that my files are being sorted lexicographically.
+    # This doesn't cause any issues with the program because of the way I use the function.
+    
     frames = []
     for file in files:
         frames.append(_get_unpadded_framenumber(file))
@@ -86,7 +87,7 @@ def get_missing_frames(files):
     """
     frames = []
     for file in files:
-        frames.append(_get_unpadded_framenumber(file.stem))
+        frames.append(_get_unpadded_framenumber(file))
         
     missing_frames = []
     for i in range(1, len(frames)):
