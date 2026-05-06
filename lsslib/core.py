@@ -13,7 +13,7 @@ def get_padding(files):
     
     padding = []
     for file in files:
-        frame_number = file.stem.split('.')[-1]
+        frame_number = file.split('.')[-2]
         padding.append(frame_number)
 
     if len(padding[0]) == 1 or len(padding[0]) == "0":
@@ -56,7 +56,7 @@ def get_step_size(files):
     """
     frames = []
     for file in files:
-        frames.append(_get_unpadded_framenumber(file.stem))
+        frames.append(_get_unpadded_framenumber(file))
 
     # Find the difference between frame numbers
     differences = []
@@ -111,7 +111,7 @@ def get_startframe(files):
     """
     frames = []
     for file in files:
-        frames.append(_get_unpadded_framenumber(file.stem))
+        frames.append(_get_unpadded_framenumber(file))
     startframe = min(frames)
     logger.info(f"The startframe is {startframe}")
 
@@ -124,7 +124,7 @@ def get_endframe(files):
     """
     frames = []
     for file in files:
-        frames.append(_get_unpadded_framenumber(file.stem))
+        frames.append(_get_unpadded_framenumber(file))
     endframe = max(frames)
     logger.info(f"The endframe is {endframe}")
     
@@ -190,16 +190,13 @@ def group_keys(files):
     for file in files:
         frames.append(file.name)
     logger.info(f"The file are {frames}")
-    
+
     for frame in frames:
-        key = frame.rsplit('.', 2)[0]
-        grouped_keys[key].append(frame)
-        logger.info(f"The key is {key}")
-        logger.info(f"The grouped key is {grouped_keys}")
+            key = frame.rsplit('.', 2)[0]
+            grouped_keys[key].append(frame)
+            #logger.info(f"The key is {key}")
+            #logger.info(f"The grouped key is {grouped_keys}")
         
-    
-    
-    
     return grouped_keys
 
 
@@ -209,7 +206,8 @@ def _get_unpadded_framenumber(filename):
     """
     Get the current frame number with padding removed.
     """
-    frame_number = int(filename.split('.')[-1])
+    frame_number = int(filename.split('.')[-2])
+    logger.info(f"The unpadded frame_number is {frame_number}")
 
     return frame_number
 

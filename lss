@@ -4,9 +4,6 @@
 import sys
 from pathlib import Path
 import logging
-from typing import KeysView
-from unittest import TestProgram
-
 from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames,
                     get_endframe, get_startframe, find_key, group_keys, sequence)
 
@@ -34,26 +31,26 @@ if not files:
     logger.error("No files found")
     sys.exit(1)
 
-# Get file name and sequence characteristics first
-
-startframe = get_startframe(files)
-endframe = get_endframe(files)
-padding = get_padding(files)
-is_contiguous = is_contiguous(files)
-step_size = get_step_size(files)
-if not is_contiguous or step_size != 1:
-    missing_frames = get_missing_frames(files)
-
-
 # Read the files and group them into a hash table/dictionary
-keys = group_keys(files)
+dictionary = group_keys(files)
 
-# Get the keys. FooA, seq100, seq2000, etc
+# Get the sequence names / keys. FooA, seq100, seq2000, etc
 sequences = []
-for key in keys:
+for key in dictionary:
     sequences.append(key)
 logger.info(f"The keys are: {sequences}")
 
 # Print file sequences in a compact representation.
-for key in keys:
-    print(keys[key][0])
+for sequence in dictionary:
+    files_in_sequence = dictionary[sequence]
+    
+    startframe = get_startframe(dictionary[sequence])
+    endframe = get_endframe(dictionary[sequence])
+    padding = get_padding(dictionary[sequence])
+    step_size = get_step_size(dictionary[sequence])
+    
+    first_file = files_in_sequence[0]
+    first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
+    print(first_file_metadata)
+
+    # The above will need if statement logic.
