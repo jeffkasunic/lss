@@ -21,12 +21,12 @@ about sliding window, longest common prefix algorithms, and the main reason I us
 """
 
 # TO FIX: Discontiguous sequences with more than one missing frame only parse the first one. Add a `for` loop. 
-# TO FIX: Multi-padded sequences in the same directory only prints one of them. Create a temp dictionary to parse while printing.
 
 
 import sys
 import os
 from pathlib import Path
+from collections import defaultdict
 import logging
 from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames, find_key,
                     get_endframe, get_startframe, group_keys, is_mixed_padding)
@@ -90,25 +90,37 @@ for sequence in dictionary:
     # Get second element in the list. Getting the first element in a zero-padded sequence that started at frame 0 caused a printing error.
     first_file = files_in_sequence[1]
     
-    # A sequence of files with a stride length.
+    # Print a sequence of files with a stride length.
     if not contiguous and step_size > 1:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}x{step_size}#{padding}")
         print(first_file_metadata)
         
-    # A discontiguous sequence of files.
+    # Print a discontiguous sequence of files.
     # TO FIX: Needs to be `for` loop to get all missing frames.
     elif missing_frames:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{missing_frames[0] - 1},{missing_frames[0] + 1}-{endframe}#{padding}")
         print(first_file_metadata)
-    
-    # A multi-padded sequence of files.    
-    # TO FIX: Will only print one of them.
+
+    # Print a multi-padded sequence of files.
+    # Split files based on padding length by creating a new temporary dictionary.
     elif mixed_padding:
-        # Add `for` loop logic here.
-        first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
-        print(first_file_metadata)
-    
-    # Default: A contiguous sequence of files.
+        padding_group = defaultdict(list)
+        for f in files_in_sequence:
+            frame = f.rsplit('.')[-2]  # Get frame number
+            padding_group[len(frame)].append(f)
+        groups = padding_group.values()
+
+        # Get metadata for the subgroups
+        for group in groups:
+            startframe = get_startframe(group)
+            endframe = get_endframe(group)
+            padding = get_padding(group)
+
+            first_file = group[1]
+            first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
+            print(first_file_metadata)
+
+    # Default: Print a contiguous sequence of files.
     else:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
         print(first_file_metadata)
