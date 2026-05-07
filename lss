@@ -9,7 +9,7 @@ from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frame
                     get_endframe, get_startframe, group_keys, is_mixed_padding)
 
 logger = logging.getLogger("MAIN")
-logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
+logging.basicConfig(level=logging.WARN, format="[%(levelname)s %(name)s]: %(message)s")
 
 
 # Get file path from command line
@@ -60,6 +60,7 @@ for sequence in dictionary:
     missing_frames = get_missing_frames(dictionary[sequence])
 
 
+    
     # Logic statements for printing
     
     first_file = files_in_sequence[0]
@@ -87,7 +88,7 @@ for sequence in dictionary:
 
 
 
-# TO FIX: Case 02: sequences with more than one missing frame only separate out the first one.
+# TO FIX: Case 02: sequences with more than one missing frame only separate out the first one. Add for loop.
 # TO FIX: Case 04: multi-padded files in the same directory only prints one of them.
 # TO FIX: Case 05: when padding is 0, frame range can't start at 0.
 # TO FIX: find_key() is using .stem stuff. Fix, even though not in use.
