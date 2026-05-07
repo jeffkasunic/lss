@@ -19,9 +19,6 @@ This script will work on multiple sequences types in the same directory. All thr
 parse just fine together.
 """
 
-# Covering the possibility of all sequences living together in the same directory was the reason for thinking 
-# about the sliding window and longest common prefix algorithms. It was also the main reason I used a hash table / dictionary.
-
 # TO FIX: Discontiguous sequences with more than one missing frame only parse the first one. Add a `for` loop. 
 
 
