@@ -216,7 +216,7 @@ def _get_unpadded_framenumber(filename):
         frame_number = int(filename.split('.')[-2])
         # logger.info(f"The unpadded frame_number for {filename} is {frame_number}")
     except:
-        logger.error(f"The file {filename} has an invalid format. Files must be name.frame.ext")
+        logger.error(f"The file {filename} has an invalid naming format. Files must be name.framenumber.extension")
         sys.exit(1)
     return frame_number
 

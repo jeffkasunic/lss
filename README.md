@@ -6,6 +6,15 @@ Displays file sequences in a compact representation.
 
 The tool will display files in the current working directory if called without an explicit path. Otherwise, it will take a path as input.
 
+Assumes the filename is formatted: name.framenumber.extension
+
+Examples:
+* FooA.0000.exr 
+* seq3800.0001.exr 
+* 2000.0220.bty_env_01.0001.exr
+
+This script will work on multiple sequences types in the same directory. All three of the above sequences would
+parse just fine together. 
 
 ## sequence_create
 Creates a sequence of files to be used as test input with the lss tool.
