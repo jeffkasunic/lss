@@ -26,6 +26,7 @@ def get_padding(files):
     
     return p
 
+
 def is_contiguous(files):
     """
     Is this a contiguous sequence?
@@ -40,6 +41,7 @@ def is_contiguous(files):
         logger.info("The sequence is contiguous.")
     
     return contiguous
+
 
 def is_mixed_padding(files):
     """
@@ -60,6 +62,7 @@ def is_mixed_padding(files):
     logger.info(f"Is padding mixed: {is_mixed}")
     
     return is_mixed
+
 
 def get_step_size(files):
     """
@@ -86,6 +89,7 @@ def get_step_size(files):
     else:
         logger.info("The sequence is not stepped.")
         return False
+
 
 def get_missing_frames(files):
     """
@@ -175,7 +179,6 @@ def find_key(files):
     #
     # This function is no longer used in this script.
 
-
     logger.info(f"Finding key.")
     logger.info(f"The number of files is {len(files)}")
 
@@ -212,11 +215,13 @@ def _get_unpadded_framenumber(filename):
 
     return frame_number
 
+
 def _get_frame_range_total (files):
     frame_range_total = (get_endframe(files) - get_startframe(files) + 1)
     logger.info(f"The frame range total is {frame_range_total}")
 
     return frame_range_total
+
 
 def _get_longest_filename(files):
     
