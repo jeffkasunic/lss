@@ -1,4 +1,5 @@
 import logging
+import sys
 from collections import defaultdict
 
 logger = logging.getLogger(__name__)
@@ -210,9 +211,13 @@ def _get_unpadded_framenumber(filename):
     """
     Get the current frame number with padding removed.
     """
-    frame_number = int(filename.split('.')[-2])
-    # logger.info(f"The unpadded frame_number for {filename} is {frame_number}")
-
+    
+    try:
+        frame_number = int(filename.split('.')[-2])
+        # logger.info(f"The unpadded frame_number for {filename} is {frame_number}")
+    except:
+        logger.error(f"The file {filename} has an invalid format. Files must be name.frame.ext")
+        sys.exit(1)
     return frame_number
 
 
