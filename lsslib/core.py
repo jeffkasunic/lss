@@ -140,11 +140,6 @@ def get_endframe(files):
 def group_keys(files):
     """
     Group sequences of files into a hash table / dictionary.
-    
-    Assumes the filename is formatted: any_text_delimter_or_numer.number.filetension
-        Examples:
-            FooA.0000.exr
-            2000.0220.bty_env_01.0001.exr
     """
     # Iterates from the end of the filename, using "." as the delimiter. Everything after the
     # first two "." encountered is the key.

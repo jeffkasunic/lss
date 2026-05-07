@@ -61,36 +61,33 @@ for sequence in dictionary:
 
 
     # Logic statements for printing
+    
     first_file = files_in_sequence[0]
-    first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
-    print(first_file_metadata)
-
-
-
-    """
-    # Logic statements for printing
-    first_file = files_in_sequence[0]
-    # A sequence of files with a stride length.
+    
+    # Case 03: A sequence of files with a stride length.
     if not contiguous and step_size > 1:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}x{step_size}#{padding}")
         print(first_file_metadata)
-        logger.info("-----------------------------------------------")
-        continue
-    if not contiguous and step_size == False:
-        # A discontiguous sequence of files with 4-padded frames.
-        # TO FIX: Needs to be for loop to get all missing frames.
+        
+    # Case 02: A discontiguous sequence of files with 4-padded frames.
+    # TO FIX: Needs to be for loop to get all missing frames.
+    elif missing_frames:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{missing_frames[0] - 1},{missing_frames[0] + 1}-{endframe}#{padding}")
         print(first_file_metadata)
-        logger.info("-----------------------------------------------")
-        continue
-    else:
-        # A contiguous sequence of files with 4-padded frames.
+    
+    # Case 04: A multi-padded sequence of files.    
+    elif mixed_padding:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
         print(first_file_metadata)
-        logger.info("-----------------------------------------------")
+        
+    # Case 1: A contiguous sequence of files with 4-padded frames.
+    else:
+        first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
+        print(first_file_metadata)
 
-    """
 
-# TO FIX: Case 04: mixed padding directories
+
+# TO FIX: Case 02: sequences with more than one missing frame only separate out the first one.
+# TO FIX: Case 04: multi-padded files in the same directory only prints one of them.
 # TO FIX: Case 05: when padding is 0, frame range can't start at 0.
-# TO FIX: ind_key() is using .stem stuff. Fix, even though not in use.
+# TO FIX: find_key() is using .stem stuff. Fix, even though not in use.
