@@ -1,20 +1,31 @@
 #!/usr/bin/env python3
 
-# Displays file sequences in a compact representation.
+"""
+Displays file sequences in a compact representation.
 
-# Assumes the filename is formatted: any_text_delimter_or_numer.number.filetension
-# Examples:
-#   FooA.0000.exr
-#   seq3800.0001.exr
-#   2000.0220.bty_env_01.0001.exr
-#
-# This script will work on multiple sequences types in the same directory. For example, all three of the
-# above sequences would parse just fine together. Covering the possibility of all sequences living together
-# was the reason for thinking about sliding window, longest common prefix algorithms. And the main reason
-# I used a hash table / dictionary.
-#
-# TO FIX: Discontiguous sequences with more than one missing frame only parse the first one. Add a `for` loop.
-# TO FIX: Multi-padded sequences in the same directory only prints one of them. Create a temp dictionary to parse while printing.
+Runnning the command will operate on the current working directory if called without an explicit path.
+Otherwise, it can take a path as input.
+
+Assumes the filename is formatted: any_text_delimter_or_numer.number.filetension
+
+Examples:
+   FooA.0000.exr
+   
+   seq3800.0001.exr
+   
+   2000.0220.bty_env_01.0001.exr
+
+ This script will work on multiple sequences types in the same directory. For example, all three of the
+ above sequences would parse just fine together. Covering the possibility of all sequences living together
+ was the reason for thinking about sliding window, longest common prefix algorithms. And the main reason
+ I used a hash table / dictionary.
+
+ TO FIX: Discontiguous sequences with more than one missing frame only parse the first one. Add a `for` loop.
+ 
+ TO FIX: Multi-padded sequences in the same directory only prints one of them. Create a temp dictionary to parse while printing.
+ 
+ TO FIX: add a check to make sure we are only looking at properly named files.
+"""
 
 import sys
 import os
@@ -24,7 +35,7 @@ from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frame
                     get_endframe, get_startframe, group_keys, is_mixed_padding)
 
 logger = logging.getLogger("MAIN")
-logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
+logging.basicConfig(level=logging.WARN, format="[%(levelname)s %(name)s]: %(message)s")
 
 
 # Get file path from command line
@@ -38,8 +49,7 @@ logger.info("Reading files at: " + path)
 if not os.path.isdir(path):
     logger.error("No directory found")
     sys.exit("Directory does not exist")
-    sys.exit(1)
-    
+
 # Read files into a list and sort
 files = []
 for file in Path(path).iterdir():
@@ -89,22 +99,19 @@ for sequence in dictionary:
         print(first_file_metadata)
         
     # A discontiguous sequence of files.
-    # TO FIX: Needs to be for loop to get all missing frames.
+    # TO FIX: Needs to be `for` loop to get all missing frames.
     elif missing_frames:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{missing_frames[0] - 1},{missing_frames[0] + 1}-{endframe}#{padding}")
         print(first_file_metadata)
     
-    # Case 04: A multi-padded sequence of files.    
+    # A multi-padded sequence of files.    
+    # TO FIX: Will only print one of them.
     elif mixed_padding:
-        first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
-        print(first_file_metadata)
-
-    # Case 05: A contiguous sequence of files with 4-padded frames.
-    elif padding == 0 and contiguous:
+        # Add `for` loop logic here.
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
         print(first_file_metadata)
     
-    # Default: A contiguous sequence of files with 4-padded frames.
+    # Default: A contiguous sequence of files.
     else:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
         print(first_file_metadata)
