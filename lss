@@ -1,15 +1,30 @@
 #!/usr/bin/env python3
+
 # Displays file sequences in a compact representation.
+
+# Assumes the filename is formatted: any_text_delimter_or_numer.number.filetension
+# Examples:
+#   FooA.0000.exr
+#   seq3800.0001.exr
+#   2000.0220.bty_env_01.0001.exr
+#
+# This script will work on multiple sequences types in the same directory. For example, all three of the
+# above sequences would parse just fine together. Covering the possibility of all sequences living together
+# was the reason for thinking about sliding window, longest common prefix algorithms. And the main reason
+# I used a hash table / dictionary.
+#
+# TO FIX: Discontiguous sequences with more than one missing frame only parse the first one. Add a `for` loop.
+# TO FIX: Multi-padded sequences in the same directory only prints one of them. Create a temp dictionary to parse while printing.
 
 import sys
 import os
 from pathlib import Path
 import logging
-from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames,
+from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames, find_key,
                     get_endframe, get_startframe, group_keys, is_mixed_padding)
 
 logger = logging.getLogger("MAIN")
-logging.basicConfig(level=logging.WARN, format="[%(levelname)s %(name)s]: %(message)s")
+logging.basicConfig(level=logging.INFO, format="[%(levelname)s %(name)s]: %(message)s")
 
 
 # Get file path from command line
@@ -46,6 +61,10 @@ for key in dictionary:
     sequences.append(key)
 logger.info(f"The keys are: {sequences}")
 
+# Not in use. Finds the Longest Common Prefix.
+lcp = find_key(files)
+logger.info(f"Longest Common Prefix: {lcp}")
+
 # Print file sequences in a compact representation.
 for sequence in dictionary:
     files_in_sequence = dictionary[sequence]
@@ -58,19 +77,18 @@ for sequence in dictionary:
     step_size = get_step_size(dictionary[sequence])
     contiguous = is_contiguous(dictionary[sequence])
     missing_frames = get_missing_frames(dictionary[sequence])
-
-
     
     # Logic statements for printing
+
+    # Get second element in the list. Getting the first element in a zero-padded sequence that started at frame 0 caused a printing error.
+    first_file = files_in_sequence[1]
     
-    first_file = files_in_sequence[0]
-    
-    # Case 03: A sequence of files with a stride length.
+    # A sequence of files with a stride length.
     if not contiguous and step_size > 1:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}x{step_size}#{padding}")
         print(first_file_metadata)
         
-    # Case 02: A discontiguous sequence of files with 4-padded frames.
+    # A discontiguous sequence of files.
     # TO FIX: Needs to be for loop to get all missing frames.
     elif missing_frames:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{missing_frames[0] - 1},{missing_frames[0] + 1}-{endframe}#{padding}")
@@ -80,15 +98,14 @@ for sequence in dictionary:
     elif mixed_padding:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
         print(first_file_metadata)
-        
-    # Case 1: A contiguous sequence of files with 4-padded frames.
+
+    # Case 05: A contiguous sequence of files with 4-padded frames.
+    elif padding == 0 and contiguous:
+        first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
+        print(first_file_metadata)
+    
+    # Default: A contiguous sequence of files with 4-padded frames.
     else:
         first_file_metadata = first_file.replace(first_file.split(".")[-2], f"{startframe}-{endframe}#{padding}")
         print(first_file_metadata)
 
-
-
-# TO FIX: Case 02: sequences with more than one missing frame only separate out the first one. Add for loop.
-# TO FIX: Case 04: multi-padded files in the same directory only prints one of them.
-# TO FIX: Case 05: when padding is 0, frame range can't start at 0.
-# TO FIX: find_key() is using .stem stuff. Fix, even though not in use.

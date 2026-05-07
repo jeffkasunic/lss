@@ -187,7 +187,7 @@ def find_key(files):
     logger.info(f"length of frame[0]: {len(frames[0])} ")
     logger.info(f"frame[0]: {frames[0]} ")
 
-    longest_filename_in_dir = _get_longest_filename(files)
+    longest_filename_in_dir = _get_longest_filename(frames)
     logger.info(f"The longest filename is {longest_filename_in_dir} chars")
 
     for i in range(0, longest_filename_in_dir):
@@ -220,4 +220,4 @@ def _get_frame_range_total (files):
 
 def _get_longest_filename(files):
     
-    return max(len(file.stem) for file in files)
+    return max(len(file) for file in files)
