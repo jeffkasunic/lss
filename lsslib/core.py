@@ -167,18 +167,16 @@ def find_key(files):
     """
     Find the longest common prefix in a sequence of files.
     """
-    # My initial attempts inolved a sliding window algorithm, using a vertical scanning approach where I compare
-    # chars in one element to the next element, one at a time, until I find a change between two. This only works on a sorted list. 
-    # 
-    # But then I realized only the right pointer moves in this case. The solution morphed into a simpler Longest Common Prefix algorithm.
-    # 
-    # But in the end, I realized all I had to do was iterate from the end of the filename, using "." as the delimiter.
-    # Everything before the first two "." encountered is the key.
-    #
-    # I was trying to account for all possible naming conventions and delimiters, but settled on enforcing this: filename.anyting.anything
-    # That will be version 2.0.
-    #
-    # This function is no longer used in this script.
+    # My initial attempts inolved a sliding window algorithm, using a vertical scanning approach where I compare 
+    # chars in one element to the next element, one at a time, until I find a change between two. This only works on 
+    # a sorted list. But then I realized only the right pointer moves in this case. The solution morphed into a 
+    # simpler Longest Common Prefix algorithm.
+
+    # I was trying to account for all possible naming conventions and delimiters, but settled on enforcing a file 
+    # naming convention for the user. Now I iterate from the end of the filename, using "." as the delimiter.
+    # Everything before the first two "." encountered is the key. Expected file name by user: name.framenumber.extension
+
+    # This function is no longer used in the script.
 
     logger.info(f"Finding key.")
     logger.info(f"The number of files is {len(files)}")

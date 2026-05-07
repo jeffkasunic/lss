@@ -6,7 +6,7 @@ Displays file sequences in a compact representation.
 Runnning the command will operate on the current working directory if called without an explicit path.
 Otherwise, it can take a path as input.
 
-Assumes the filename is formatted: any_text_delimter_or_numer.number.filetension
+Assumes the filename is formatted: name.framenumber.extension
 
 Examples:
    FooA.0000.exr
@@ -16,9 +16,11 @@ Examples:
    2000.0220.bty_env_01.0001.exr
 
 This script will work on multiple sequences types in the same directory. All three of the above sequences would
-parse just fine together. Covering the possibility of all sequences living together was the reason for thinking 
-about sliding window, longest common prefix algorithms, and the main reason I used a hash table / dictionary.
+parse just fine together.
 """
+
+# Covering the possibility of all sequences living together in the same directory was the reason for thinking 
+# about the sliding window and longest common prefix algorithms. It was also the main reason I used a hash table / dictionary.
 
 # TO FIX: Discontiguous sequences with more than one missing frame only parse the first one. Add a `for` loop. 
 
