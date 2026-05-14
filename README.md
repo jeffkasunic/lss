@@ -11,7 +11,7 @@ Files in directory:
 * seq3800.0003.exr
 
 Display as:
-* seq3800.####.0-3.exr
+* seq3800.0-3#4.exr
 
 The tool will display files in the current working directory if called without an explicit path. Otherwise, it will take a path as input.
 
