@@ -2,7 +2,16 @@
 
 
 ## lss
-Displays file sequences in a compact representation.
+Displays file sequences in a compact representation. For example:
+
+Files in directory:
+* seq3800.0000.exr
+* seq3800.0001.exr
+* seq3800.0002.exr
+* seq3800.0003.exr
+
+Display as:
+* seq3800.####.0-3.exr
 
 The tool will display files in the current working directory if called without an explicit path. Otherwise, it will take a path as input.
 
