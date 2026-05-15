@@ -22,9 +22,6 @@ Examples:
 * seq3800.0001.exr 
 * 2000.0220.bty_env_01.0001.exr
 
-This script will work on multiple sequences types in the same directory. All three of the above sequences would
-parse just fine together. 
-
 ## sequence_create
 Creates a sequence of files to be used as test input with the lss tool.
 
