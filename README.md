@@ -2,7 +2,16 @@
 
 
 ## lss
-Displays file sequences in a compact representation.
+Displays file sequences in a compact representation. For example:
+
+Files in directory:
+* seq3800.0000.exr
+* seq3800.0001.exr
+* seq3800.0002.exr
+* seq3800.0003.exr
+
+Display as:
+* seq3800.0-3#4.exr
 
 The tool will display files in the current working directory if called without an explicit path. Otherwise, it will take a path as input.
 
@@ -12,9 +21,6 @@ Examples:
 * FooA.0000.exr 
 * seq3800.0001.exr 
 * 2000.0220.bty_env_01.0001.exr
-
-This script will work on multiple sequences types in the same directory. All three of the above sequences would
-parse just fine together. 
 
 ## sequence_create
 Creates a sequence of files to be used as test input with the lss tool.
