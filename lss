@@ -27,8 +27,8 @@ import os
 from pathlib import Path
 from collections import defaultdict
 import logging
-from lsslib import (get_padding, is_contiguous, get_step_size, get_missing_frames, find_key,
-                    get_endframe, get_startframe, group_keys, is_mixed_padding)
+from lsslib.core import (get_padding, is_contiguous, get_step_size, get_missing_frames, find_key, get_endframe, 
+                         get_startframe, group_keys, is_mixed_padding)
 
 logger = logging.getLogger("MAIN")
 logging.basicConfig(level=logging.WARN, format="[%(levelname)s %(name)s]: %(message)s")

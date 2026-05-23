@@ -16,7 +16,7 @@ Examples:
 
 import sys
 import logging
-from lsslib import SequenceParser, SequenceFormatter
+from lsslib.core_v2 import SequenceParser, SequenceFormatter
 
 logging.basicConfig(level=logging.WARN, format="[%(levelname)s %(name)s]: %(message)s")
 

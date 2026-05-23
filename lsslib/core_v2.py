@@ -43,7 +43,6 @@ class Sequence:
         return None
 
 
-
 class SequenceParser:
     """
     Turns a directory of filenames into a list of Sequence objects.
