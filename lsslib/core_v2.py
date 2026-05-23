@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 class Sequence:
     """
     Holds parsed sequence data and answers questions about it.
-    Knows what the sequence IS, not how to parse or display it.
     """
 
     def __init__(self, name: str, extension: str, frames: list[int], padding: int):
@@ -119,7 +118,6 @@ class SequenceParser:
 class SequenceFormatter:
     """
     Renders a Sequence to a compact string.
-    Knows how to display, not what the sequence means.
     """
 
     def format(self, sequence: Sequence) -> str:
