@@ -4,7 +4,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
-def create(stem: str, start_frame: int = 0, end_frame: int = 20, padding: int = 4, step: int = 1, path: str = "./") -> None:
+def seq_create(stem: str, start_frame: int = 0, end_frame: int = 20, padding: int = 4, step: int = 1, path: str = "./") -> None:
     """
     Create a sequence of files to be used as input to lsslib.
     """

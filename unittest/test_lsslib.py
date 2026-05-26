@@ -140,7 +140,7 @@ _make_stub()
 # ---------------------------------------------------------------------------
 # Real imports (works whether using the stub above or the real package)
 # ---------------------------------------------------------------------------
-from lsslib.core_v2 import Sequence, SequenceParser, SequenceFormatter
+from lsslib.core import Sequence, SequenceParser, SequenceFormatter
 
 
 # ===========================================================================
