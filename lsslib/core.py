@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class Sequence:
     """
-    Holds parsed sequence data and answers questions about it.
+    Holds parsed sequence data.
     """
 
     def __init__(self, name: str, extension: str, frames: list[int], padding: int):
@@ -45,7 +45,7 @@ class Sequence:
 class SequenceParser:
     """
     Turns a directory of filenames into a list of Sequence objects.
-    Knows how to read and parse, not how to analyze or display.
+    Reads and parses files.
     """
 
     def parse_directory(self, path: str) -> list[Sequence]:
