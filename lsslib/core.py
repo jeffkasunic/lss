@@ -1,231 +1,176 @@
 import logging
 import sys
 from collections import defaultdict
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-# Public
 
-def get_padding(files):
+class Sequence:
     """
-    Get the padding amount of a frame.
-    Tests first frame only. Assumes that the is_contiguous check was run first
-    """
-    
-    padding = []
-    for file in files:
-        frame_number = file.split('.')[-2]
-        padding.append(frame_number)
-
-    if len(padding[0]) == 1 or len(padding[0]) == "0":
-        p = 0 #Zero-padded
-    elif len(padding[0]) > 1 and not padding[0].startswith('0'):
-        p = 0  #Zero-padded
-    else:
-        p = len(padding[0])
-    logger.info(f"The padding for {padding} is {p}")
-    
-    return p
-
-
-def is_contiguous(files):
-    """
-    Is this a contiguous sequence?
-    """
-    frame_range_total = _get_frame_range_total(files)
-    
-    if frame_range_total != len(files):
-        contiguous = False
-        logger.info("There are missing frames.")
-    else:
-        contiguous = True
-        logger.info("The sequence is contiguous.")
-    
-    return contiguous
-
-
-def is_mixed_padding(files):
-    """
-    Is there more than one padding-length in the directory?
-    """
-    padding = []
-    for f in files:
-        padding.append(len(f.rsplit('.', 2)[-2]))
-    padding = set(padding)  # Use a set to hold only unique values.
-    logger.info(f"The set of padding lengths is {padding}")
-
-    # If there is more than one padding length, this is True. False if not.
-    if len(padding) > 1:
-        is_mixed = True
-    else:
-        is_mixed = False
-
-    logger.info(f"Is padding mixed: {is_mixed}")
-    
-    return is_mixed
-
-
-def get_step_size(files):
-    """
-    Is this a stepped sequence?
-    """
-        
-    frames = []
-    for file in files:
-        frames.append(_get_unpadded_framenumber(file))
-
-    # Find the difference between frame numbers
-    differences = []
-    for i in range(1, len(frames)):
-        differences.append(frames[i] - frames[i-1])
-    logger.info(f"The difference between frames is: {differences}")
-
-    # Test to make sure the difference is the same for all frames
-    comparisons = []
-    for diff in differences:
-        comparisons.append(diff == differences[0])  # Generate a True or False list
-    if all(comparisons):  # If all comparisons are True
-        logger.info(f"The step size is: {differences[0]} ")
-        return differences[0]
-    else:
-        logger.info("The sequence is not stepped.")
-        return False
-
-
-def get_missing_frames(files):
-    """
-    Get the missing frame in an array of integers.
+    Holds parsed sequence data.
     """
 
-    frames = []
-    for file in files:
-        frames.append(_get_unpadded_framenumber(file))
-    
-    frame_range = _get_frame_range_total(files)
-    
-    logger.info(f"The length of frames is {len(frames)}")
-    logger.info(f"The frame range is {frame_range}")
-    logger.info(f"The frames are: {frames}")
+    def __init__(self, name: str, extension: str, frames: list[int], padding: int):
+        self.name = name            # "seq3800"
+        self.extension = extension  # "exr"
+        self.frames = sorted(frames)
+        self.padding = padding
 
-    missing_frames = []
-    for i in range(1, frame_range):
-        if i not in frames:
-            missing_frames.append(i)
-    
-    logger.info(f"Missing frame numbers: {missing_frames}")
-    return missing_frames
+    def startframe(self) -> int:
+        return self.frames[0]
+
+    def endframe(self) -> int:
+        return self.frames[-1]
+
+    def is_contiguous(self) -> bool:
+        expected = set(range(self.startframe(), self.endframe() + 1))
+        return expected == set(self.frames)
+
+    def missing_frames(self) -> list[int]:
+        expected = set(range(self.startframe(), self.endframe() + 1))
+        return sorted(expected - set(self.frames))
+
+    def step_size(self) -> int | None:
+        """
+        Returns the step size if the sequence is evenly stepped, otherwise None.
+        e.g. [0, 2, 4, 6] -> 2,  [0, 1, 3] -> None
+        """
+        differences = [self.frames[i] - self.frames[i - 1] for i in range(1, len(self.frames))]
+        if len(set(differences)) == 1 and differences[0] > 1:
+            return differences[0]
+        return None
 
 
-def get_startframe(files):
+class SequenceParser:
     """
-    Get the min value in an array of integers.
+    Turns a directory of filenames into a list of Sequence objects.
+    Reads and parses files.
     """
-    frames = []
-    for file in files:
-        frames.append(_get_unpadded_framenumber(file))
-    startframe = min(frames)
-    logger.info(f"The startframe for {frames} is {startframe}")
 
-    return startframe
+    def parse_directory(self, path: str) -> list[Sequence]:
+        """
+        Reads a directory and returns a list of Sequence objects.
+        """
+        files = self._get_files(path)
+        grouped = self._group_by_key(files)
+
+        sequences = []
+        for (name, padding), filenames in grouped.items():
+            frames = [self._extract_frame_number(f) for f in filenames]
+            extension = filenames[0].rsplit('.', 1)[-1]
+            sequences.append(Sequence(name, extension, frames, padding))
+
+        return sequences
+
+    def _get_files(self, path: str) -> list[str]:
+        """
+        Reads filenames from a directory, ignoring hidden files.
+        """
+        p = Path(path)
+        if not p.is_dir():
+            logger.error(f"Directory not found: {path}")
+            sys.exit("Directory does not exist")
+
+        files = sorted(f.name for f in p.iterdir() if not f.name.startswith('.'))
+
+        if not files:
+            logger.error("No files found")
+            sys.exit(1)
+
+        return files
+
+    def _group_by_key(self, files: list[str]) -> dict[tuple, list[str]]:
+        """
+        Groups filenames by (sequence name, padding length).
+        Keeping padding in the key means mixed-padding sequences become separate groups.
+
+        e.g. seq3600.0001.exr -> ("seq3600", 4)
+             seq3600.001.exr  -> ("seq3600", 3)
+        """
+        grouped = defaultdict(list)
+        for filename in files:
+            name = filename.rsplit('.', 2)[0]
+            padding = self._detect_padding(filename)
+            grouped[(name, padding)].append(filename)
+        return grouped
+
+    def _extract_frame_number(self, filename: str) -> int:
+        """
+        Extracts the integer frame number from a filename.
+        e.g. "seq3800.0001.exr" -> 1
+        """
+        try:
+            return int(filename.rsplit('.', 2)[-2])
+        except (ValueError, IndexError):
+            logger.error(f"Invalid filename format: {filename}. Expected name.framenumber.extension")
+            sys.exit(1)
+
+    def _detect_padding(self, filename: str) -> int:
+        """
+        Detects the padding width from a single filename.
+        e.g. "seq3800.0001.exr" -> 4,  "seq3800.1.exr" -> 1
+        """
+        frame_str = filename.rsplit('.', 2)[-2]
+        return len(frame_str)
 
 
-def get_endframe(files):
+class SequenceFormatter:
     """
-    Get the max value in an array of integers.
+    Renders a Sequence to a compact string.
     """
-    frames = []
-    for file in files:
-        frames.append(_get_unpadded_framenumber(file))
-    endframe = max(frames)
-    logger.info(f"The endframe {frames} is {endframe}")
-    
-    return endframe
 
+    def format(self, sequence: Sequence) -> str:
+        """
+        Dispatches to the appropriate formatting method based on sequence type.
+        """
+        if sequence.step_size():
+            return self._format_stepped(sequence)
+        elif sequence.missing_frames():
+            return self._format_missing(sequence)
+        else:
+            return self._format_contiguous(sequence)
 
-def group_keys(files):
-    """
-    Group sequences of files into a hash table / dictionary.
-    """
-    # Iterates from the end of the filename, using "." as the delimiter. Everything after the
-    # first two "." encountered is the key.
+    def _format_contiguous(self, sequence: Sequence) -> str:
+        """
+        seq3800.0000.exr - seq3800.0003.exr  ->  seq3800.0-3#4.exr
+        """
+        frame_range = f"{sequence.startframe()}-{sequence.endframe()}"
+        padding = f"#{sequence.padding}" if sequence.padding else ""
+        return f"{sequence.name}.{frame_range}{padding}.{sequence.extension}"
 
-    grouped_keys = defaultdict(list)
+    def _format_stepped(self, sequence: Sequence) -> str:
+        """
+        seq3800.0000.exr, seq3800.0002.exr, seq3800.0004.exr  ->  seq3800.0-4x2#4.exr
+        """
+        frame_range = f"{sequence.startframe()}-{sequence.endframe()}"
+        step = f"x{sequence.step_size()}"
+        padding = f"#{sequence.padding}" if sequence.padding else ""
+        return f"{sequence.name}.{frame_range}{step}{padding}.{sequence.extension}"
 
-    frames = []
-    for file in files:
-        frames.append(file.name)
-    logger.info(f"The file are {frames}")
+    def _format_missing(self, sequence: Sequence) -> str:
+        """
+        seq3800.0000.exr, seq3800.0002.exr, seq3800.0003.exr  ->  seq3800.0-1,2-3#4.exr
 
-    for frame in frames:
-        key = frame.rsplit('.', 2)[0]
-        grouped_keys[key].append(frame)
-        
-    return grouped_keys
+        Handles multiple missing frames by splitting into contiguous chunks.
+        """
+        chunks = self._get_contiguous_chunks(sequence.frames)
+        padding = f"#{sequence.padding}" if sequence.padding else ""
+        range_str = ",".join(f"{chunk[0]}-{chunk[-1]}" for chunk in chunks)
+        return f"{sequence.name}.{range_str}{padding}.{sequence.extension}"
 
-
-def find_key(files):
-    """
-    Find the longest common prefix in a sequence of files.
-    """
-    # My initial attempts inolved a sliding window algorithm, using a vertical scanning approach where I compare 
-    # chars in one element to the next element, one at a time, until I find a change between two. This only works on 
-    # a sorted list. But then I realized only the right pointer moves in this case. The solution morphed into a 
-    # simpler Longest Common Prefix algorithm.
-
-    # I was trying to account for all possible naming conventions and delimiters, but settled on enforcing a file 
-    # naming convention for the user. Now I iterate from the end of the filename, using "." as the delimiter.
-    # Everything before the first two "." encountered is the key. Expected file name by user: name.framenumber.extension
-
-    # This function is no longer used in the script.
-
-    logger.info(f"Finding key.")
-    logger.info(f"The number of files is {len(files)}")
-
-    frames = []
-    for file in files:
-        frames.append(file.name)
-
-    logger.info(f"The file are {frames}")
-    logger.info(f"length of frame[0]: {len(frames[0])} ")
-    logger.info(f"frame[0]: {frames[0]} ")
-
-    longest_filename_in_dir = _get_longest_filename(frames)
-    logger.info(f"The longest filename is {longest_filename_in_dir} chars")
-
-    for i in range(0, longest_filename_in_dir):
-        char = frames[0][i]
-        for j in range(1, len(frames)):
-            if frames[j][i] != char or i == len(frames[j]):
-                seq_key = frames[0][0:i]
-                return seq_key
+    def _get_contiguous_chunks(self, frames: list[int]) -> list[list[int]]:
+        """
+        Splits a frame list into contiguous runs.
+        e.g. [0, 1, 3, 4, 5] -> [[0, 1], [3, 4, 5]]
+        """
+        chunks = []
+        chunk = [frames[0]]
+        for frame in frames[1:]:
+            if frame == chunk[-1] + 1:
+                chunk.append(frame)
             else:
-                continue
-    return None
-
-
-# Private
-
-def _get_unpadded_framenumber(filename):
-    """
-    Get the current frame number with padding removed.
-    """
-    
-    try:
-        frame_number = int(filename.split('.')[-2])
-        # logger.info(f"The unpadded frame_number for {filename} is {frame_number}")
-    except:
-        logger.error(f"The file {filename} has an invalid naming format. Files must be name.framenumber.extension")
-        sys.exit(1)
-    return frame_number
-
-
-def _get_frame_range_total (files):
-    frame_range_total = (get_endframe(files) - get_startframe(files) + 1)
-    logger.info(f"The frame range total is {frame_range_total}")
-
-    return frame_range_total
-
-
-def _get_longest_filename(files):
-    
-    return max(len(file) for file in files)
+                chunks.append(chunk)
+                chunk = [frame]
+        chunks.append(chunk)
+        return chunks
